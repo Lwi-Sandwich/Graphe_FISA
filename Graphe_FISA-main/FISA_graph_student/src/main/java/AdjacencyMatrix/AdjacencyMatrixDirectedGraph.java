@@ -23,10 +23,10 @@ public class AdjacencyMatrixDirectedGraph {
     protected int nbNodes;		// Number of vertices
     protected int nbArcs;		// Number of edges/arcs
     protected int[][] matrix;	// The adjacency matrix
-	
+
 	//--------------------------------------------------
 	// 				Constructors
-	//-------------------------------------------------- 
+	//--------------------------------------------------
 
     public AdjacencyMatrixDirectedGraph() {
         this.matrix = new int[0][0];
@@ -34,7 +34,7 @@ public class AdjacencyMatrixDirectedGraph {
         this.nbArcs = 0;
     }
 
-      
+
 	public AdjacencyMatrixDirectedGraph(int[][] mat) {
 		this.nbNodes = mat.length;
 		this.nbArcs = 0;
@@ -71,15 +71,15 @@ public class AdjacencyMatrixDirectedGraph {
     public int getNbNodes() {
         return this.nbNodes;
     }
-	
+
     /**
 	 * @return the number of arcs in the graph
- 	 */	
+ 	 */
 	public int getNbArcs() {
 		return this.nbArcs;
 	}
 
-	
+
 	/**
 	 * @param u the vertex selected
 	 * @return a list of vertices which are the successors of u
@@ -107,12 +107,12 @@ public class AdjacencyMatrixDirectedGraph {
 		}
 		return pred;
 	}
-	
-	
+
+
 	// ------------------------------------------------
-	// 					Methods 
-	// ------------------------------------------------		
-	
+	// 					Methods
+	// ------------------------------------------------
+
 	/**
 	 * @return true if the arc (from,to) exists in the graph.
  	 */
@@ -129,7 +129,7 @@ public class AdjacencyMatrixDirectedGraph {
 	}
 
 	/**
-	 * Adds the arc (from,to). 
+	 * Adds the arc (from,to).
 	 */
 	public void addArc(int from, int to) {
 		// A completer
@@ -139,7 +139,7 @@ public class AdjacencyMatrixDirectedGraph {
 	 * @return a new graph which is the inverse graph of this.matrix
  	 */
 	public AdjacencyMatrixDirectedGraph computeInverse() {
-		AdjacencyMatrixDirectedGraph amInv = new AdjacencyMatrixDirectedGraph(this.matrix);	
+		AdjacencyMatrixDirectedGraph amInv = new AdjacencyMatrixDirectedGraph(this.matrix);
 		// A completer
 		return amInv;
 	}
@@ -162,14 +162,14 @@ public class AdjacencyMatrixDirectedGraph {
 		AdjacencyMatrixDirectedGraph am = new AdjacencyMatrixDirectedGraph(matrix2);
 		System.out.println(am);
 		System.out.println("n = "+am.getNbNodes()+ "\nm = "+am.getNbArcs() +"\n");
-		
+
 		// Successors of vertex 1 :
 		System.out.println("Sucesssors of vertex 1 : ");
 		List<Integer> t = am.getSuccessors(1);
 		for (Integer integer : t) {
 			System.out.print(integer + ", ");
 		}
-		
+
 		// Predecessors of vertex 2 :
 		System.out.println("\n\nPredecessors of vertex 2 : ");
 		List<Integer> t2 = am.getPredecessors(2);
