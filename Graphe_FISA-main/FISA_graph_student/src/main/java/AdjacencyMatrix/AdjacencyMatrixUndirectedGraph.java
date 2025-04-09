@@ -103,7 +103,6 @@ public class AdjacencyMatrixUndirectedGraph {
      	* @return true if the edge is in the graph.
      	*/
 	public boolean isEdge(int x, int y) {
-		// A completer
 		return matrix[x][y] == 1;
 	}
 
@@ -111,7 +110,6 @@ public class AdjacencyMatrixUndirectedGraph {
      	* removes the edge (x,y) if there exists one between these nodes in the graph.
     	 */
 	public void removeEdge(int x, int y) {
-		// A completer
 		matrix[x][y] = 0;
 	}
 
@@ -119,7 +117,6 @@ public class AdjacencyMatrixUndirectedGraph {
      	* adds the edge (x,y) if there is not already one.
      	*/
 	public void addEdge(int x, int y) {
-		// A completer
 		matrix[x][y] = 1;
 	}
 
