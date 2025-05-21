@@ -120,8 +120,8 @@ public class AdjacencyListUndirectedGraph {
      * @return true if there is an edge between x and y
      */
     public boolean isEdge(UndirectedNode x, UndirectedNode y) {      	
-        // A completer
-    	return true;
+        return this.edges.contains(new Edge(x, y));
+    	//return true;
     }
 
     /**
@@ -129,7 +129,13 @@ public class AdjacencyListUndirectedGraph {
      */
     public void removeEdge(UndirectedNode x, UndirectedNode y) {
     	if(isEdge(x,y)){
-    		// A completer
+    		if(isEdge(x, y)){
+                Edge e1 = new Edge(x, y);
+                this.edges.remove(e1);
+                this.getNodeOfList(x).getIncidentEdges().remove(e1);
+                this.getNodeOfList(y).getIncidentEdges().remove(e1);
+                this.nbEdges--;
+            }
     	}
     }
 
@@ -140,7 +146,11 @@ public class AdjacencyListUndirectedGraph {
      */
     public void addEdge(UndirectedNode x, UndirectedNode y) {
     	if(!isEdge(x,y)){
-    		// A completer
+    		Edge e1 = new Edge(x, y);
+            this.edges.add(e1);
+            this.getNodeOfList(x).addEdge(e1);
+            this.getNodeOfList(y).addEdge(new Edge(y,x));
+            this.nbEdges++;
     	}
     }
 
