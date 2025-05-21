@@ -117,30 +117,36 @@ public class AdjacencyMatrixDirectedGraph {
 	 * @return true if the arc (from,to) exists in the graph.
  	 */
 	public boolean isArc(int from, int to) {
-		// A completer
-		return true;
+		return this.matrix[from][to] > 0;
 	}
 
 	/**
 	 * removes the arc (from,to) if there exists one between these nodes in the graph.
 	 */
 	public void removeArc(int from, int to) {
-		// A completer
+		this.nbArcs -= this.matrix[from][to];
+		this.matrix[from][to] = 0;
 	}
 
 	/**
 	 * Adds the arc (from,to).
 	 */
 	public void addArc(int from, int to) {
-		// A completer
+		this.nbArcs += this.matrix[from][to];
+		this.matrix[from][to] = 1;
 	}
 
 	/**
 	 * @return a new graph which is the inverse graph of this.matrix
  	 */
 	public AdjacencyMatrixDirectedGraph computeInverse() {
-		AdjacencyMatrixDirectedGraph amInv = new AdjacencyMatrixDirectedGraph(this.matrix);
-		// A completer
+		int[][] newMatrix = new int[this.matrix.length][this.matrix[0].length];
+		for (int i = 0; i < this.matrix.length; i++) {
+			for (int j = 0; j < this.matrix.length; i++) {
+				newMatrix[j][i] = this.matrix[i][j];
+			}
+		}
+		AdjacencyMatrixDirectedGraph amInv = new AdjacencyMatrixDirectedGraph(newMatrix);
 		return amInv;
 	}
 
