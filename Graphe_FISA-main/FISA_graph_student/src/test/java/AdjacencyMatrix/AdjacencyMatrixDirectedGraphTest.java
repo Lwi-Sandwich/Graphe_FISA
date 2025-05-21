@@ -1,14 +1,13 @@
-package AdjcencyMatrix;
+package AdjacencyMatrix;
 
 import static org.junit.Assert.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import AdjacencyMatrix.AdjacencyMatrixUndirectedValuedGraph;
-
-class AdjencyMatrixUndirectedGraphTest {
-    private AdjacencyMatrixUndirectedValuedGraph graph;
+class AdjacencyMatrixDirectedGraphTest {
+    // TODO update les tests
+    private AdjacencyMatrixDirectedGraph graph;
     private int[][] matrix = {
         {0, 1, 0, 1},
         {1, 0, 1, 0},
