@@ -127,31 +127,45 @@ public class AdjacencyListDirectedGraph {
 	 * @return true if arc (from,to) exists in the graph
  	 */
     public boolean isArc(DirectedNode from, DirectedNode to) {
-    	// A completer
-    	return false;
+        return this.getArcs().contains(new Arc(from, to));
     }
 
     /**
 	 * Removes the arc (from,to), if it exists. And remove this arc and the inverse in the list of arcs from the two extremities (nodes)
  	 */
     public void removeArc(DirectedNode from, DirectedNode to) {
-    	// A completer
+        if (!this.isArc(from, to)) {
+            return;
+        }
+        this.nbArcs--;
+        Arc a = new Arc(from, to);
+        this.arcs.remove(a);
+        from.getArcPred().remove(a);
+        to.getArcSucc().remove(a);
+
     }
 
     /**
 	* Adds the arc (from,to) if it is not already present in the graph, requires the existing of nodes from and to.
 	* And add this arc to the incident list of both extremities (nodes) and into the global list "arcs" of the graph.
-  	* On non-valued graph, every arc has a weight equal to 0.
- 	*/
+    * On non-valued graph, every arc has a weight equal to 0.
+    */
     public void addArc(DirectedNode from, DirectedNode to) {
-    	// A completer
+        if (this.isArc(from, to)) {
+            return;
+        }
+        this.nbArcs++;
+        Arc a = new Arc(from, to);
+        this.arcs.add(a);
+        from.addArc(a);
+        to.addArc(a);
     }
 
     //--------------------------------------------------
     // 				Methods
     //--------------------------------------------------
 
-     /**
+    /**
      * @return the corresponding nodes in the list this.nodes
      */
     public DirectedNode getNodeOfList(DirectedNode src) {
@@ -163,7 +177,11 @@ public class AdjacencyListDirectedGraph {
      */
     public int[][] toAdjacencyMatrix() {
         int[][] matrix = new int[nbNodes][nbNodes];
-     // A completer
+        this.arcs.forEach(a -> {
+            int i = a.getFirstNode().getLabel();
+            int j = a.getSecondNode().getLabel();
+            matrix[i][j] = 1;
+        });
         return matrix;
     }
 
@@ -173,7 +191,12 @@ public class AdjacencyListDirectedGraph {
     public AdjacencyListDirectedGraph computeInverse() {
         AdjacencyListDirectedGraph g = new AdjacencyListDirectedGraph(this); // creation of a copy of the current graph.
         // A completer
-        return g;
+        this.arcs.forEach(a -> {
+            DirectedNode n1 = a.getFirstNode();
+            DirectedNode n2 = a.getSecondNode();
+            g.addArc(n2, n1);
+        });
+        return g; // TODO pas vérifié
     }
 
     @Override
