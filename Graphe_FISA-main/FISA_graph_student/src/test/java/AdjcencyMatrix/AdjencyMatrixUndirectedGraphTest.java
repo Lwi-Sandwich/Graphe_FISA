@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import AdjacencyMatrix.AdjacencyMatrixUndirectedGraph;
+import AdjacencyMatrix.AdjacencyMatrixUndirectedValuedGraph;
 
 class AdjencyMatrixUndirectedGraphTest {
-    private AdjacencyMatrixUndirectedGraph graph;
+    private AdjacencyMatrixUndirectedValuedGraph graph;
     private int[][] matrix = {
         {0, 1, 0, 1},
         {1, 0, 1, 0},
@@ -18,7 +18,7 @@ class AdjencyMatrixUndirectedGraphTest {
 
     @BeforeEach
     void setUp() {
-        graph = new AdjacencyMatrixUndirectedGraph(matrix);
+        graph = new AdjacencyMatrixUndirectedValuedGraph(matrix);
     }
 
     @Test
@@ -74,5 +74,19 @@ class AdjencyMatrixUndirectedGraphTest {
     void TestAddEdgeAlreadyExist() {
         graph.addEdge(0, 1);
         assertTrue(graph.isEdge(0, 1));
+    }
+
+    @Test
+    void TestAddEdgeWithCost() {
+        graph.addEdge(0, 2, 5);
+        assertTrue(graph.isEdge(0, 2));
+        assertEquals(5, graph.getMatrix()[0][2]);
+    }
+
+    @Test
+    void TestAddEdgeWithCostAlreadyExist() {
+        graph.addEdge(0, 1, 5);
+        assertTrue(graph.isEdge(0, 1));
+        assertEquals(5, graph.getMatrix()[0][1]);
     }
 }
