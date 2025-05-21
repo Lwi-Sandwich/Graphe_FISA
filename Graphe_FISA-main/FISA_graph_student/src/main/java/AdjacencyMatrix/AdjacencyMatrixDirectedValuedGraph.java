@@ -7,33 +7,33 @@ public class AdjacencyMatrixDirectedValuedGraph extends AdjacencyMatrixDirectedG
 
 	//--------------------------------------------------
 	// 				Class variables
-	//-------------------------------------------------- 
+	//--------------------------------------------------
 
-	// No class variable, we use the matrix variable but with costs values 
+	// No class variable, we use the matrix variable but with costs values
 
 	//--------------------------------------------------
 	// 				Constructors
-	//-------------------------------------------------- 
+	//--------------------------------------------------
 
 	public AdjacencyMatrixDirectedValuedGraph(int[][] matrixVal) {
 		super(matrixVal);
 	}
 
-	
+
 	// ------------------------------------------------
 	// 					Methods
-	// ------------------------------------------------	
-	
-	
+	// ------------------------------------------------
+
+
 	/**
      * adds the arc (from,to,cost). If there is already one initial cost, we replace it.
-     */	
+     */
 	public void addArc(int from, int to, int cost ) {
-		// A completer
+		this.matrix[from][to] = cost;
 	}
 
-	
-	
+
+
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder("\n Matrix of Costs: \n");

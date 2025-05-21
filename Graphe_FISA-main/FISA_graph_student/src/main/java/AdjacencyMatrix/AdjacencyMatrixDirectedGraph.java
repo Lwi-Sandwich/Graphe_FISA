@@ -84,28 +84,28 @@ public class AdjacencyMatrixDirectedGraph {
 	 * @param u the vertex selected
 	 * @return a list of vertices which are the successors of u
 	 */
-	public List<Integer> getSuccessors(int u) {
+	public int[] getSuccessors(int u) {
 		List<Integer> succ = new ArrayList<Integer>();
 		for(int v =0;v<this.matrix[u].length;v++){
 			if(this.matrix[u][v]>0){
 				succ.add(v);
 			}
 		}
-		return succ;
+		return succ.stream().mapToInt(i -> i).toArray();
 	}
 
 	/**
 	 * @param v the vertex selected
 	 * @return a list of vertices which are the predecessors of v
 	 */
-	public List<Integer> getPredecessors(int v) {
+	public int[] getPredecessors(int v) {
 		List<Integer> pred = new ArrayList<Integer>();
 		for(int u =0;u<this.matrix.length;u++){
 			if(this.matrix[u][v]>0){
 				pred.add(u);
 			}
 		}
-		return pred;
+		return pred.stream().mapToInt(i -> i).toArray();
 	}
 
 
@@ -124,7 +124,9 @@ public class AdjacencyMatrixDirectedGraph {
 	 * removes the arc (from,to) if there exists one between these nodes in the graph.
 	 */
 	public void removeArc(int from, int to) {
-		this.nbArcs -= this.matrix[from][to];
+		if (this.matrix[from][to] > 0) {
+			this.nbArcs--;
+		}
 		this.matrix[from][to] = 0;
 	}
 
@@ -132,7 +134,9 @@ public class AdjacencyMatrixDirectedGraph {
 	 * Adds the arc (from,to).
 	 */
 	public void addArc(int from, int to) {
-		this.nbArcs += this.matrix[from][to];
+		if (!isArc(from, to)) {
+			this.nbArcs++;
+		}
 		this.matrix[from][to] = 1;
 	}
 
@@ -171,15 +175,15 @@ public class AdjacencyMatrixDirectedGraph {
 
 		// Successors of vertex 1 :
 		System.out.println("Sucesssors of vertex 1 : ");
-		List<Integer> t = am.getSuccessors(1);
-		for (Integer integer : t) {
+		int[] t = am.getSuccessors(1);
+		for (int integer : t) {
 			System.out.print(integer + ", ");
 		}
 
 		// Predecessors of vertex 2 :
 		System.out.println("\n\nPredecessors of vertex 2 : ");
-		List<Integer> t2 = am.getPredecessors(2);
-		for (Integer integer : t2) {
+		int[] t2 = am.getPredecessors(2);
+		for (int integer : t2) {
 			System.out.print(integer + ", ");
 		}
 		// A completer
