@@ -4,7 +4,6 @@ package AdjacencyMatrix;
 import GraphAlgorithms.GraphTools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import AdjacencyList.AdjacencyListUndirectedGraph;
@@ -82,17 +81,17 @@ public class AdjacencyMatrixUndirectedGraph {
 
 	/**
 	 *
-	 * @param x the vertex selected
-	 * @return a list of vertices which are the neighbours of x
+	 * @param v the vertex selected
+	 * @return a list of vertices which are the neighbours of v
 	 */
-	public List<Integer> getNeighbours(int v) {
+	public int[] getNeighbours(int v) {
 		List<Integer> l = new ArrayList<>();
 		for(int i = 0; i<matrix[v].length; i++){
 			if(matrix[v][i]>0){
 				l.add(i);
 			}
 		}
-		return l;
+		return l.stream().mapToInt(i -> i).toArray();
 	}
 
 	// ------------------------------------------------
@@ -100,30 +99,30 @@ public class AdjacencyMatrixUndirectedGraph {
 	// ------------------------------------------------
 
 	/**
-     	* @return true if the edge is in the graph.
-     	*/
+		* @return true if the edge is in the graph.
+	*/
 	public boolean isEdge(int x, int y) {
 		return matrix[x][y] == 1;
 	}
 
 	/**
-     	* removes the edge (x,y) if there exists one between these nodes in the graph.
-    	 */
+		* removes the edge (x,y) if there exists one between these nodes in the graph.
+	 */
 	public void removeEdge(int x, int y) {
 		matrix[x][y] = 0;
 	}
 
 	/**
-     	* adds the edge (x,y) if there is not already one.
-     	*/
+		* adds the edge (x,y) if there is not already one.
+	*/
 	public void addEdge(int x, int y) {
 		matrix[x][y] = 1;
 	}
 
 
 	/**
-    	* @return the adjacency matrix representation int[][] of the graph
-    	*/
+		* @return the adjacency matrix representation int[][] of the graph
+	*/
 	public int[][] toAdjacencyMatrix() {
 		return this.matrix;
 	}
@@ -140,31 +139,4 @@ public class AdjacencyMatrixUndirectedGraph {
 		s.append("\n");
 		return s.toString();
 	}
-
-	public static void main(String[] args) {
-		int[][] mat2 = GraphTools.generateGraphData(10, 35, false, true, false, 100001);
-		AdjacencyMatrixUndirectedGraph am = new AdjacencyMatrixUndirectedGraph(mat2);
-		System.out.println(am);
-		System.out.println("n = "+am.getNbNodes()+ "\nm = "+am.getNbEdges() +"\n");
-
-		// Neighbours of vertex 2 :
-		System.out.println("Neighbours of vertex 2 : ");
-		List<Integer> t2 = am.getNeighbours(2);
-		for (Integer integer : t2) {
-			System.out.print(integer + ", ");
-		}
-
-		// We add three edges {3,5} :
-		System.out.println("\n\nisEdge(3, 5) ? " + am.isEdge(3, 5));
-		for(int i = 0; i<3;i++)
-			am.addEdge(3, 5);
-
-		System.out.println("\n"+am);
-
-		System.out.println("\nAfter removing one edge {3,5} :");
-		am.removeEdge(3,5);
-		System.out.println(am);
-		// A completer
-	}
-
 }
