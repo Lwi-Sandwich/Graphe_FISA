@@ -144,9 +144,9 @@ public class AdjacencyMatrixDirectedGraph {
 	 * @return a new graph which is the inverse graph of this.matrix
  	 */
 	public AdjacencyMatrixDirectedGraph computeInverse() {
-		int[][] newMatrix = new int[this.matrix.length][this.matrix[0].length];
+		int[][] newMatrix = new int[this.matrix.length][this.matrix.length];
 		for (int i = 0; i < this.matrix.length; i++) {
-			for (int j = 0; j < this.matrix.length; i++) {
+			for (int j = 0; j < this.matrix.length; j++) {
 				newMatrix[j][i] = this.matrix[i][j];
 			}
 		}

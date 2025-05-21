@@ -6,18 +6,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class AdjacencyMatrixDirectedGraphTest {
-    // TODO update les tests
-    private AdjacencyMatrixDirectedGraph graph;
+    private AdjacencyMatrixDirectedValuedGraph graph;
     private int[][] matrix = {
         {0, 1, 0, 1},
-        {1, 0, 1, 0},
-        {0, 1, 0, 1},
-        {1, 0, 1, 0}
+        {0, 0, 1, 0},
+        {0, 0, 0, 1},
+        {0, 1, 0, 0}
     };
 
     @BeforeEach
     void setUp() {
-        graph = new AdjacencyMatrixUndirectedValuedGraph(matrix);
+        graph = new AdjacencyMatrixDirectedValuedGraph(matrix);
     }
 
     @Test
@@ -32,60 +31,82 @@ class AdjacencyMatrixDirectedGraphTest {
 
     @Test
     void TestGetNbEdges() {
-        assertArrayEquals(new int[] { 4 }, new int[] { graph.getNbEdges() });
+        assertArrayEquals(new int[] { 5 }, new int[] { graph.getNbArcs() });
     }
 
     @Test
-    void TestGetNeighbours() {
+    void TestGetPredecessors() {
+        int[] expected = { 0, 2 };
+        assertArrayEquals(expected, graph.getPredecessors(3));
+    }
+
+    @Test
+    void TestGetSuccessors() {
         int[] expected = { 1, 3 };
-        assertArrayEquals(expected, graph.getNeighbours(0));
+        assertArrayEquals(expected, graph.getSuccessors(0));
     }
 
     @Test
-    void TestIsEdge() {
-        assertTrue(graph.isEdge(0, 1));
+    void TestIsArc() {
+        assertTrue(graph.isArc(0, 1));
     }
 
     @Test
-    void TestIsNotEdge() {
-        assertFalse(graph.isEdge(0, 2));
+    void TestIsNotArc() {
+        assertFalse(graph.isArc(0, 2));
     }
 
     @Test
-    void TestRemoveEdge() {
-        graph.removeEdge(0, 1);
-        assertFalse(graph.isEdge(0, 1));
+    void TestAddArc() {
+        graph.addArc(0, 2);
+        assertTrue(graph.isArc(0, 2));
     }
 
     @Test
-    void TestRemoveEdgeNotExist() {
-        graph.removeEdge(0, 2);
-        assertFalse(graph.isEdge(0, 2));
+    void TestRemoveArc() {
+        graph.removeArc(0, 1);
+        assertFalse(graph.isArc(0, 1));
     }
 
     @Test
-    void TestAddEdge() {
-        graph.addEdge(0, 2);
-        assertTrue(graph.isEdge(0, 2));
+    void TestAddArcAlreadyExists() {
+        graph.addArc(0, 1);
+        assertTrue(graph.isArc(0, 1));
     }
 
     @Test
-    void TestAddEdgeAlreadyExist() {
-        graph.addEdge(0, 1);
-        assertTrue(graph.isEdge(0, 1));
+    void TestRemoveArcDoesNotExist() {
+        graph.removeArc(0, 2);
+        assertFalse(graph.isArc(0, 2));
     }
 
     @Test
-    void TestAddEdgeWithCost() {
-        graph.addEdge(0, 2, 5);
-        assertTrue(graph.isEdge(0, 2));
-        assertEquals(5, graph.getMatrix()[0][2]);
+    void TestComputeInverse() {
+        AdjacencyMatrixDirectedGraph inverseGraph = graph.computeInverse();
+        int[][] expectedInverseMatrix = {
+            {0, 0, 0, 0},
+            {1, 0, 0, 1},
+            {0, 1, 0, 0},
+            {1, 0, 1, 0}
+        };
+        assertArrayEquals(expectedInverseMatrix, inverseGraph.getMatrix());
     }
 
     @Test
-    void TestAddEdgeWithCostAlreadyExist() {
-        graph.addEdge(0, 1, 5);
-        assertTrue(graph.isEdge(0, 1));
-        assertEquals(5, graph.getMatrix()[0][1]);
+    void TestValuedArc() {
+        graph.addArc(0, 1, 5);
+        assertTrue(graph.isArc(0, 1));
+    }
+
+    @Test
+    void TestValuedMatrix() {
+        int[][] expectedValuedMatrix = {
+            {0, 5, 0, 1},
+            {0, 0, 1, 0},
+            {0, 0, 0, 1},
+            {0, 1, 0, 0}
+        };
+        graph.addArc(0, 1, 5);
+        assertArrayEquals(expectedValuedMatrix, graph.getMatrix());
     }
 }
