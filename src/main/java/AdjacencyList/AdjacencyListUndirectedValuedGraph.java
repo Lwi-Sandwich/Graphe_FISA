@@ -43,7 +43,7 @@ public class AdjacencyListUndirectedValuedGraph extends AdjacencyListUndirectedG
      * And adds this edge to the incident list of both extremities (nodes) and into the global list "edges" of the graph.
      */
     public void addEdge(UndirectedNode x, UndirectedNode y, int cost) {
-        super.addValuedEdge(x, y, cost);
+        super.addEdge(x, y, cost);
     }
 
 

@@ -143,15 +143,15 @@ public class AdjacencyListUndirectedGraph {
      * In non-valued graph, every edge has a cost equal to 0.
      */
     public void addEdge(UndirectedNode x, UndirectedNode y) {
-        addValuedEdge(x, y, 0);
+        addEdge(x, y, 0);
     }
 
-    protected void addValuedEdge(UndirectedNode x, UndirectedNode y, int weight) {
+    public void addEdge(UndirectedNode x, UndirectedNode y, int cost) {
     	if(!isEdge(x,y)){
-    		Edge e1 = new Edge(x, y, weight);
+    		Edge e1 = new Edge(x, y, cost);
             this.edges.add(e1);
             this.getNodeOfList(x).addEdge(e1);
-            this.getNodeOfList(y).addEdge(new Edge(y,x, weight));
+            this.getNodeOfList(y).addEdge(new Edge(y,x, cost));
             this.nbEdges++;
     	}
     }
@@ -181,6 +181,7 @@ public class AdjacencyListUndirectedGraph {
             int i1 = n1.getLabel();
             int i2 = n2.getLabel();
             matrix[i1][i2] = e.getWeight() == 0 ? 1 : e.getWeight();
+            matrix[i2][i1] = e.getWeight() == 0 ? 1 : e.getWeight();
         }
         return matrix;
     }
