@@ -15,9 +15,9 @@ public class AdjacencyListUndirectedValuedGraph extends AdjacencyListUndirectedG
     public AdjacencyListUndirectedValuedGraph(int[][] matrixVal) {
     	super();
     	this.nbNodes = matrixVal.length;
-        
+
         for (int i = 0; i < this.nbNodes; i++) {
-            this.nodes.add(new UndirectedNode(i));            
+            this.nodes.add(new UndirectedNode(i));
         }
         for (UndirectedNode n1 : this.getNodes()) {
             for (int j = n1.getLabel(); j < matrixVal[n1.getLabel()].length; j++) {
@@ -36,18 +36,18 @@ public class AdjacencyListUndirectedValuedGraph extends AdjacencyListUndirectedG
     //--------------------------------------------------
     // 				Methods
     //--------------------------------------------------
-    
+
 
     /**
      * Adds the edge (from,to) with cost if it is not already present in the graph.
      * And adds this edge to the incident list of both extremities (nodes) and into the global list "edges" of the graph.
      */
     public void addEdge(UndirectedNode x, UndirectedNode y, int cost) {
-    	// A completer
+        super.addValuedEdge(x, y, cost);
     }
-    
-    
-    
+
+
+
     public static void main(String[] args) {
         int[][] matrixValued = GraphTools.generateValuedGraphData(10, false, true, true, false, 100001);
         GraphTools.afficherMatrix(matrixValued);
