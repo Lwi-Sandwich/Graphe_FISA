@@ -147,13 +147,26 @@ public class AdjacencyListUndirectedGraph {
     }
 
     public void addEdge(UndirectedNode x, UndirectedNode y, int cost) {
+        Edge e1 = new Edge(x, y, cost);
     	if(!isEdge(x,y)){
-    		Edge e1 = new Edge(x, y, cost);
             this.edges.add(e1);
             this.getNodeOfList(x).addEdge(e1);
             this.getNodeOfList(y).addEdge(new Edge(y,x, cost));
             this.nbEdges++;
     	}
+        // Replace the cost if already exists
+        else {
+            for (Edge e : this.getNodeOfList(x).getIncidentEdges()) {
+                if (e.getSecondNode().equals(y)) {
+                    e.setWeight(cost);
+                }
+            }
+            for (Edge e : this.getNodeOfList(y).getIncidentEdges()) {
+                if (e.getSecondNode().equals(x)) {
+                    e.setWeight(cost);
+                }
+            }
+        }
     }
 
     //--------------------------------------------------
