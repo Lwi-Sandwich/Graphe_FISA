@@ -1,9 +1,10 @@
 package AdjacencyList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import GraphAlgorithms.GraphTools;
 import Nodes_Edges.Arc;
@@ -127,7 +128,9 @@ public class AdjacencyListDirectedGraph {
 	 * @return true if arc (from,to) exists in the graph
  	 */
     public boolean isArc(DirectedNode from, DirectedNode to) {
-        return this.getArcs().contains(new Arc(from, to));
+        return this.getArcs().stream().anyMatch(
+            a -> a.getFirstNode().equals(from) && a.getSecondNode().equals(to)
+        );
     }
 
     /**
@@ -138,10 +141,9 @@ public class AdjacencyListDirectedGraph {
             return;
         }
         this.nbArcs--;
-        Arc a = new Arc(from, to);
-        this.arcs.remove(a);
-        from.getArcPred().remove(a);
-        to.getArcSucc().remove(a);
+        this.arcs.removeIf(arc -> arc.getFirstNode().equals(from) && arc.getSecondNode().equals(to));
+        from.getArcPred().removeIf(arc -> arc.getSecondNode().equals(to));
+        to.getArcSucc().removeIf(arc -> arc.getFirstNode().equals(from));
 
     }
 
@@ -151,14 +153,19 @@ public class AdjacencyListDirectedGraph {
     * On non-valued graph, every arc has a weight equal to 0.
     */
     public void addArc(DirectedNode from, DirectedNode to) {
+        addArc(from, to, 1);
+    }
+
+    public void addArc(DirectedNode from, DirectedNode to, int weight) {
+        Arc a = new Arc(from, to, weight);
         if (this.isArc(from, to)) {
-            return;
+            this.removeArc(from, to);
         }
-        this.nbArcs++;
-        Arc a = new Arc(from, to);
         this.arcs.add(a);
         from.addArc(a);
         to.addArc(a);
+        this.nbArcs++;
+        return;
     }
 
     //--------------------------------------------------
@@ -180,7 +187,7 @@ public class AdjacencyListDirectedGraph {
         this.arcs.forEach(a -> {
             int i = a.getFirstNode().getLabel();
             int j = a.getSecondNode().getLabel();
-            matrix[i][j] = 1;
+            matrix[i][j] = a.getWeight();
         });
         return matrix;
     }
@@ -189,14 +196,15 @@ public class AdjacencyListDirectedGraph {
 	 * @return a new graph implementing IDirectedGraph interface which is the inverse graph of this
  	 */
     public AdjacencyListDirectedGraph computeInverse() {
-        AdjacencyListDirectedGraph g = new AdjacencyListDirectedGraph(this); // creation of a copy of the current graph.
+        ArrayList<Arc> empty = new ArrayList<>();
+        AdjacencyListDirectedGraph g = new AdjacencyListDirectedGraph(this.getNodes(), empty);
         // A completer
         this.arcs.forEach(a -> {
             DirectedNode n1 = a.getFirstNode();
             DirectedNode n2 = a.getSecondNode();
-            g.addArc(n2, n1);
+            g.addArc(n2, n1, a.getWeight());
         });
-        return g; // TODO pas vérifié
+        return g;
     }
 
     @Override
