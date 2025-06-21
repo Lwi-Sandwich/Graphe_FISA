@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -193,6 +194,10 @@ public class GraphToolsList extends GraphTools {
 		int[][] Matrix = GraphTools.generateGraphData(10, 20, false, false, true, 100001);
 		GraphTools.afficherMatrix(Matrix);
 		AdjacencyListDirectedValuedGraph al = new AdjacencyListDirectedValuedGraph(Matrix);
+		Random rand = new Random(42);
+		for (Arc arc : al.getArcs()) {
+			arc.setWeight(rand.nextInt(10) + 1); // Assign random weights between 1 and 10
+		}
 		System.out.println(al);
 		System.out.println("BFS");
 		System.out.println(bfs(al));

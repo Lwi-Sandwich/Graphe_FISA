@@ -7,34 +7,31 @@ import GraphAlgorithms.GraphTools;
 import Nodes_Edges.Edge;
 import Nodes_Edges.UndirectedNode;
 
-
 public class AdjacencyListUndirectedGraph {
 
-	//--------------------------------------------------
-    // 				Class variables
-    //--------------------------------------------------
+    // --------------------------------------------------
+    // Class variables
+    // --------------------------------------------------
 
-	protected List<UndirectedNode> nodes; // list of the nodes in the graph
-	protected List<Edge> edges; // list of the edges in the graph
+    protected List<UndirectedNode> nodes; // list of the nodes in the graph
+    protected List<Edge> edges; // list of the edges in the graph
     protected int nbNodes; // number of nodes
     protected int nbEdges; // number of edges
 
+    // --------------------------------------------------
+    // Constructors
+    // --------------------------------------------------
 
-    //--------------------------------------------------
-    // 				Constructors
-    //--------------------------------------------------
+    public AdjacencyListUndirectedGraph() {
+        this.nodes = new ArrayList<UndirectedNode>();
+        this.edges = new ArrayList<Edge>();
+        this.nbNodes = 0;
+        this.nbEdges = 0;
+    }
 
-	public AdjacencyListUndirectedGraph() {
-		 this.nodes = new ArrayList<UndirectedNode>();
-		 this.edges = new ArrayList<Edge>();
-		 this.nbNodes = 0;
-	     this.nbEdges = 0;
-	}
-
-
-	public AdjacencyListUndirectedGraph(List<UndirectedNode> nodes,List<Edge> edges) {
-		this.nodes = nodes;
-		this.edges = edges;
+    public AdjacencyListUndirectedGraph(List<UndirectedNode> nodes, List<Edge> edges) {
+        this.nodes = nodes;
+        this.edges = edges;
         this.nbNodes = nodes.size();
         this.nbEdges = edges.size();
 
@@ -50,12 +47,12 @@ public class AdjacencyListUndirectedGraph {
         }
         for (UndirectedNode n1 : this.getNodes()) {
             for (int j = n1.getLabel(); j < matrix[n1.getLabel()].length; j++) {
-            	UndirectedNode n2 = this.getNodes().get(j);
+                UndirectedNode n2 = this.getNodes().get(j);
                 if (matrix[n1.getLabel()][j] != 0) {
-                    Edge e1 = new Edge(n1,n2);
+                    Edge e1 = new Edge(n1, n2);
                     n1.addEdge(e1);
                     this.edges.add(e1);
-                	n2.addEdge(new Edge(n2,n1));
+                    n2.addEdge(e1);
                     this.nbEdges++;
                 }
             }
@@ -69,23 +66,21 @@ public class AdjacencyListUndirectedGraph {
         this.nodes = new ArrayList<UndirectedNode>();
         this.edges = new ArrayList<Edge>();
 
-
         for (UndirectedNode n : g.getNodes()) {
             this.nodes.add(new UndirectedNode(n.getLabel()));
         }
 
         for (Edge e : g.getEdges()) {
-        	this.edges.add(e);
-        	UndirectedNode new_n   = this.getNodes().get(e.getFirstNode().getLabel());
-        	UndirectedNode other_n = this.getNodes().get(e.getSecondNode().getLabel());
-        	new_n.addEdge(new Edge(e.getFirstNode(),e.getSecondNode(),e.getWeight()));
-        	other_n.addEdge(new Edge(e.getSecondNode(),e.getFirstNode(),e.getWeight()));
+            this.edges.add(e);
+            UndirectedNode new_n = this.getNodes().get(e.getFirstNode().getLabel());
+            UndirectedNode other_n = this.getNodes().get(e.getSecondNode().getLabel());
+            new_n.addEdge(new Edge(e.getFirstNode(), e.getSecondNode(), e.getWeight()));
+            other_n.addEdge(new Edge(e.getSecondNode(), e.getFirstNode(), e.getWeight()));
         }
     }
 
-
     // ------------------------------------------
-    // 				Accessors
+    // Accessors
     // ------------------------------------------
 
     /**
@@ -120,26 +115,29 @@ public class AdjacencyListUndirectedGraph {
      * @return true if there is an edge between x and y
      */
     public boolean isEdge(UndirectedNode x, UndirectedNode y) {
-        return this.edges.contains(new Edge(x, y));
+        return this.edges.contains(new Edge(x, y)) || this.edges.contains(new Edge(y, x));
     }
 
     /**
-     * Removes edge (x,y) if there exists one. And remove this edge and the inverse in the list of edges from the two extremities (nodes)
+     * Removes edge (x,y) if there exists one. And remove this edge and the inverse
+     * in the list of edges from the two extremities (nodes)
      */
     public void removeEdge(UndirectedNode x, UndirectedNode y) {
         Edge e1 = new Edge(x, y);
         Edge e2 = new Edge(y, x);
-        if (this.edges.remove(e1)) {
-            this.edges.remove(e2);
-            x.getIncidentEdges().remove(e1);
-            y.getIncidentEdges().remove(e2);
+        if (this.edges.remove(e1) || this.edges.remove(e2)) {
             this.nbEdges--;
         }
+        x.getIncidentEdges().removeIf(e -> e.getSecondNode().equals(y));
+        y.getIncidentEdges().removeIf(e -> e.getSecondNode().equals(x));
+
     }
 
     /**
-     * Adds edge (x,y) if it is not already present in the graph, requires that nodes x and y already exist.
-     * And adds this edge to the incident list of both extremities (nodes) and into the global list "edges" of the graph.
+     * Adds edge (x,y) if it is not already present in the graph, requires that
+     * nodes x and y already exist.
+     * And adds this edge to the incident list of both extremities (nodes) and into
+     * the global list "edges" of the graph.
      * In non-valued graph, every edge has a cost equal to 0.
      */
     public void addEdge(UndirectedNode x, UndirectedNode y) {
@@ -148,32 +146,30 @@ public class AdjacencyListUndirectedGraph {
 
     public void addEdge(UndirectedNode x, UndirectedNode y, int cost) {
         Edge e1 = new Edge(x, y, cost);
-    	if(!isEdge(x,y)){
+        if (!isEdge(x, y)) {
             this.edges.add(e1);
             this.getNodeOfList(x).addEdge(e1);
-            this.getNodeOfList(y).addEdge(new Edge(y,x, cost));
+            this.getNodeOfList(y).addEdge(e1);
             this.nbEdges++;
-    	}
+        }
         // Replace the cost if already exists
         else {
             for (Edge e : this.getNodeOfList(x).getIncidentEdges()) {
-                if (e.getSecondNode().equals(y)) {
+                if (e.getSecondNode().equals(y) || e.getFirstNode().equals(y)) {
                     e.setWeight(cost);
                 }
             }
             for (Edge e : this.getNodeOfList(y).getIncidentEdges()) {
-                if (e.getSecondNode().equals(x)) {
+                if (e.getSecondNode().equals(x) || e.getFirstNode().equals(x)) {
                     e.setWeight(cost);
                 }
             }
         }
     }
 
-    //--------------------------------------------------
-    // 					Methods
-    //--------------------------------------------------
-
-
+    // --------------------------------------------------
+    // Methods
+    // --------------------------------------------------
 
     /**
      * @return the corresponding nodes in the list this.nodes
@@ -199,7 +195,6 @@ public class AdjacencyListUndirectedGraph {
         return matrix;
     }
 
-
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("List of nodes and their neighbours :\n");
@@ -213,7 +208,7 @@ public class AdjacencyListUndirectedGraph {
         }
         s.append("\nList of edges :\n");
         for (Edge e : this.edges) {
-        	s.append(e).append("  ");
+            s.append(e).append("  ");
         }
         s.append("\n");
         return s.toString();
@@ -224,8 +219,7 @@ public class AdjacencyListUndirectedGraph {
         GraphTools.afficherMatrix(mat);
         AdjacencyListUndirectedGraph al = new AdjacencyListUndirectedGraph(mat);
         System.out.println(al);
-        System.out.println("(n_2,n_5) is it in the graph ? " +  al.isEdge(al.getNodes().get(2), al.getNodes().get(5)));
-
+        System.out.println("(n_2,n_5) is it in the graph ? " + al.isEdge(al.getNodes().get(2), al.getNodes().get(5)));
 
         // A completer
     }

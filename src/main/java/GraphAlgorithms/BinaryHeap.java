@@ -1,6 +1,5 @@
 package GraphAlgorithms;
 
-
 public class BinaryHeap {
 
     private int[] nodes;
@@ -27,34 +26,66 @@ public class BinaryHeap {
         return pos == 0;
     }
 
+    // Complexité O(log n)
     public void insert(int element) {
-    	// A completer
+        if (pos >= nodes.length) {
+            resize();
+        }
+        nodes[pos] = element;
+        int current = pos;
+        pos++;
+        int parent = (current - 1) / 2;
+        while (current > 0 && nodes[current] < nodes[parent]) {
+            swap(current, parent);
+            current = parent;
+            parent = (current - 1) / 2;
+        }
     }
 
+    // Complexité O(log n)
     public int remove() {
-    	// A completer
-    	return 0;
+        if (isEmpty()) {
+            return Integer.MAX_VALUE;
+        }
+        int min = nodes[0];
+        nodes[0] = nodes[pos - 1];
+        nodes[pos - 1] = Integer.MAX_VALUE;
+        pos--;
+        int current = 0;
+        // Put the new root in the right place
+        while (current < pos) {
+            int bestChild = getBestChildPos(current);
+            if (bestChild == Integer.MAX_VALUE || nodes[current] <= nodes[bestChild]) {
+                break; // the current node is smaller than its best child
+            }
+            swap(current, bestChild);
+            current = bestChild;
+        }
+        return min;
     }
 
     private int getBestChildPos(int src) {
         if (isLeaf(src)) { // the leaf is a stopping case, then we return a default value
             return Integer.MAX_VALUE;
         } else {
-        	// A completer
-        	return Integer.MAX_VALUE;
+            int left = 2 * src + 1;
+            int right = 2 * src + 2;
+            if (right >= pos) {
+                return left; // only one child
+            } else {
+                return nodes[left] < nodes[right] ? left : right; // return the index of the smallest child
+            }
         }
     }
 
-    
     /**
-	 * Test if the node is a leaf in the binary heap
-	 * 
-	 * @returns true if it's a leaf or false else
-	 * 
-	 */	
+     * Test if the node is a leaf in the binary heap
+     *
+     * @returns true if it's a leaf or false else
+     *
+     */
     private boolean isLeaf(int src) {
-    	// A completer
-    	return false;
+        return 2 * src + 1 >= pos;
     }
 
     private void swap(int father, int child) {
@@ -72,11 +103,12 @@ public class BinaryHeap {
     }
 
     /**
-	 * Recursive test to check the validity of the binary heap
-	 * 
-	 * @returns a boolean equal to True if the binary tree is compact from left to right
-	 * 
-	 */
+     * Recursive test to check the validity of the binary heap
+     *
+     * @returns a boolean equal to True if the binary tree is compact from left to
+     *          right
+     *
+     */
     public boolean test() {
         return this.isEmpty() || testRec(0);
     }
@@ -97,7 +129,7 @@ public class BinaryHeap {
 
     public static void main(String[] args) {
         BinaryHeap jarjarBin = new BinaryHeap();
-        System.out.println(jarjarBin.isEmpty()+"\n");
+        System.out.println(jarjarBin.isEmpty() + "\n");
         int k = 20;
         int m = k;
         int min = 2;
@@ -105,12 +137,18 @@ public class BinaryHeap {
         while (k > 0) {
             int rand = min + (int) (Math.random() * ((max - min) + 1));
             System.out.print("insert " + rand);
-            jarjarBin.insert(rand);            
+            jarjarBin.insert(rand);
             k--;
         }
-     // A completer
+        // A completer
         System.out.println("\n" + jarjarBin);
         System.out.println(jarjarBin.test());
+        // Suppression des éléments
+        while (!jarjarBin.isEmpty()) {
+            System.out.print("remove " + jarjarBin.remove() + " ");
+            System.out.println(jarjarBin);
+            System.out.println(jarjarBin.test());
+        }
     }
 
 }
