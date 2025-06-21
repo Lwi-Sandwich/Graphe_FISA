@@ -14,6 +14,7 @@ import java.util.concurrent.BlockingQueue;
 import AdjacencyList.AdjacencyListDirectedGraph;
 import AdjacencyList.AdjacencyListDirectedValuedGraph;
 import AdjacencyList.AdjacencyListUndirectedValuedGraph;
+import Collection.Pair;
 import Collection.Triple;
 import Nodes_Edges.Arc;
 import Nodes_Edges.DirectedNode;
@@ -131,12 +132,6 @@ public class GraphToolsList extends GraphTools {
 			if (!visite[node.getLabel()]) {
 				List<DirectedNode> composante = new ArrayList<>();
 				explorerSommetBis(inverseGraph, node, visite, composante);
-				// Affichage de la composante fortement connexe
-				System.out.print("CFC : ");
-				for (DirectedNode s : composante) {
-					System.out.print(s.getLabel() + " ");
-				}
-				System.out.println();
 				composantes.add(composante);
 			}
 		}
@@ -155,10 +150,49 @@ public class GraphToolsList extends GraphTools {
 		}
 	}
 
+	public static Pair<Integer[], DirectedNode[]> dijkstra(AdjacencyListDirectedValuedGraph graph,
+			DirectedNode source) {
+		int n = graph.getNbNodes();
+		Integer[] distances = new Integer[n];
+		DirectedNode[] predecessors = new DirectedNode[n];
+		ArrayList<Boolean> visited = new ArrayList<>(Collections.nCopies(n, false));
+		for (int i = 0; i < n; i++) {
+			distances[i] = Integer.MAX_VALUE;
+			predecessors[i] = null;
+		}
+		distances[source.getLabel()] = 0;
+		predecessors[source.getLabel()] = source;
+		while (visited.contains(false)) {
+			DirectedNode node = null;
+			// Trouver le noeud non visité avec la distance minimale
+			int minDistance = Integer.MAX_VALUE;
+			for (int i = 0; i < n; i++) {
+				if (!visited.get(i) && (distances[i] < minDistance)) {
+					minDistance = distances[i];
+					node = graph.getNodes().get(i);
+				}
+			}
+			if (minDistance == Integer.MAX_VALUE) {
+				break; // Tous les noeuds accessibles ont été visités
+			}
+			// Mise à jour des successeurs
+			visited.set(node.getLabel(), true);
+			for (Arc arc : node.getArcSucc()) {
+				DirectedNode succ = arc.getSecondNode();
+				int newDistance = distances[node.getLabel()] + arc.getWeight();
+				if (newDistance < distances[succ.getLabel()]) {
+					distances[succ.getLabel()] = newDistance;
+					predecessors[succ.getLabel()] = node;
+				}
+			}
+		}
+		return new Pair<>(distances, predecessors);
+	}
+
 	public static void main(String[] args) {
 		int[][] Matrix = GraphTools.generateGraphData(10, 20, false, false, true, 100001);
 		GraphTools.afficherMatrix(Matrix);
-		AdjacencyListDirectedGraph al = new AdjacencyListDirectedGraph(Matrix);
+		AdjacencyListDirectedValuedGraph al = new AdjacencyListDirectedValuedGraph(Matrix);
 		System.out.println(al);
 		System.out.println("BFS");
 		System.out.println(bfs(al));
@@ -174,5 +208,15 @@ public class GraphToolsList extends GraphTools {
 		System.out.println("DFS sur le graphe inverse");
 		List<List<DirectedNode>> cfcs = explorerGrapheBis(inverseGraph, ordreFinInverse); // Affiche les CFCs
 		System.out.println("CFCs : " + cfcs);
+		System.out.println("Dijkstra depuis le noeud 0");
+		DirectedNode source = al.getNodes().get(0);
+		Pair<Integer[], DirectedNode[]> result = dijkstra(al, source);
+		Integer[] distances = result.getLeft();
+		DirectedNode[] predecessors = result.getRight();
+		System.out.println("Noeud\tDistance\tPredecesseur");
+		for (int i = 0; i < distances.length; i++) {
+			System.out.println(
+					i + "\t" + distances[i] + "\t\t" + (predecessors[i] != null ? predecessors[i].getLabel() : "null"));
+		}
 	}
 }
