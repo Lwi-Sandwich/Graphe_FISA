@@ -1,6 +1,7 @@
 package GraphAlgorithms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,32 +19,30 @@ import Nodes_Edges.Arc;
 import Nodes_Edges.DirectedNode;
 import Nodes_Edges.UndirectedNode;
 
-public class GraphToolsList  extends GraphTools {
+public class GraphToolsList extends GraphTools {
 
-	private static int _DEBBUG =0;
+	private static int _DEBBUG = 0;
 
 	private static int[] visite;
 	private static int[] debut;
 	private static int[] fin;
 	private static List<Integer> order_CC;
-	private static int cpt=0;
+	private static int cpt = 0;
 
-	//--------------------------------------------------
-	// 				Constructors
-	//--------------------------------------------------
+	// --------------------------------------------------
+	// Constructors
+	// --------------------------------------------------
 
-	public GraphToolsList(){
+	public GraphToolsList() {
 		super();
 	}
 
 	// ------------------------------------------
-	// 				Accessors
+	// Accessors
 	// ------------------------------------------
 
-
-
 	// ------------------------------------------
-	// 				Methods
+	// Methods
 	// ------------------------------------------
 
 	// A completer
@@ -72,39 +71,88 @@ public class GraphToolsList  extends GraphTools {
 	}
 
 	// DFS
-	public static List<DirectedNode> explorerSommet(AdjacencyListDirectedGraph graph, DirectedNode node) {
-		List<DirectedNode> result = new ArrayList<>();
-		Set<DirectedNode> visited = new HashSet<>();
-		Stack<DirectedNode> stack = new Stack<DirectedNode>();
 
-		stack.push(node);
-		visited.add(node);
+	public static void explorerSommet(AdjacencyListDirectedGraph graph, DirectedNode node,
+			int[] visite, int[] debut, int[] fin, List<DirectedNode> ordreFin) {
+		visite[node.getLabel()] = 1;
+		debut[node.getLabel()] = cpt++;
 
-		while (!stack.isEmpty()) {
-			DirectedNode current = stack.pop();
-			result.add(current);
-			for (Arc arc : current.getArcSucc()) {
-				DirectedNode succ = arc.getSecondNode();
-				if (!visited.contains(succ)) {
-					stack.push(succ);
-					visited.add(succ);
-				}
+		for (Arc arc : node.getArcSucc()) {
+			DirectedNode succ = arc.getSecondNode();
+			if (visite[succ.getLabel()] == 0) {
+				explorerSommet(graph, succ, visite, debut, fin, ordreFin);
 			}
 		}
-		return result;
+
+		// Racine à la fin, parcours postfixe
+		visite[node.getLabel()] = 2; // totalement visité
+		fin[node.getLabel()] = cpt++;
+		ordreFin.add(node);
 	}
 
+	// Complexité : O(V + E)
 	public static List<DirectedNode> explorerGraphe(AdjacencyListDirectedGraph graph) {
-		ArrayList<DirectedNode> nodes = new ArrayList<DirectedNode>(graph.getNodes());
-		List<DirectedNode> result = new ArrayList<>();
-		while (!nodes.isEmpty()) {
-			DirectedNode node = nodes.remove(0);
-			if (!result.contains(node)) {
-				List<DirectedNode> subResult = explorerSommet(graph, node);
-				subResult.stream().filter(n -> !result.contains(n)).forEach(result::add);
+		cpt = 0; // Réinitialiser le compteur pour les timestamps
+		int n = graph.getNbNodes();
+		int[] visite = new int[n];
+		int[] debut = new int[n];
+		int[] fin = new int[n];
+		// Si x est exploré et que y est son successeur direct ou indirect,
+		// alors debut[x] < debut[y] et fin[x] > fin[y]
+		List<DirectedNode> ordreFin = new ArrayList<>();
+
+		for (DirectedNode node : graph.getNodes()) {
+			if (visite[node.getLabel()] == 0) {
+				explorerSommet(graph, node, visite, debut, fin, ordreFin);
 			}
 		}
-		return result;
+
+		// Affichage ou traitement des timestamps si besoin
+		for (DirectedNode node : graph.getNodes()) {
+			System.out.println("Node " + node.getLabel() +
+					": début=" + debut[node.getLabel()] +
+					", fin=" + fin[node.getLabel()]);
+		}
+
+		return ordreFin; // ordre de fin utile pour la 2ème passe de Kosaraju
+	}
+
+	public static List<List<DirectedNode>> explorerGrapheBis(AdjacencyListDirectedGraph inverseGraph,
+			List<DirectedNode> ordreFin) {
+		int n = inverseGraph.getNbNodes();
+		boolean[] visite = new boolean[n];
+		List<List<DirectedNode>> composantes = new ArrayList<>();
+
+		// Ordre inverse de fin : on commence par le dernier terminé
+		List<DirectedNode> ordreInverse = new ArrayList<>(ordreFin);
+		Collections.reverse(ordreInverse);
+
+		for (DirectedNode node : ordreInverse) {
+			if (!visite[node.getLabel()]) {
+				List<DirectedNode> composante = new ArrayList<>();
+				explorerSommetBis(inverseGraph, node, visite, composante);
+				// Affichage de la composante fortement connexe
+				System.out.print("CFC : ");
+				for (DirectedNode s : composante) {
+					System.out.print(s.getLabel() + " ");
+				}
+				System.out.println();
+				composantes.add(composante);
+			}
+		}
+		return composantes;
+	}
+
+	public static void explorerSommetBis(AdjacencyListDirectedGraph inverseGraph, DirectedNode node,
+			boolean[] visite, List<DirectedNode> composante) {
+		visite[node.getLabel()] = true;
+		composante.add(node);
+		for (Arc arc : node.getArcSucc()) {
+			DirectedNode succ = arc.getSecondNode();
+			if (!visite[succ.getLabel()]) {
+				explorerSommetBis(inverseGraph, succ, visite, composante);
+			}
+		}
 	}
 
 	public static void main(String[] args) {
@@ -115,8 +163,16 @@ public class GraphToolsList  extends GraphTools {
 		System.out.println("BFS");
 		System.out.println(bfs(al));
 		System.out.println("DFS");
-		System.out.println(explorerGraphe(al));
-
-		// A completer
+		List<DirectedNode> ordreFin = explorerGraphe(al);
+		System.out.println("DFS ordre de fin : " + ordreFin);
+		AdjacencyListDirectedGraph inverseGraph = al.computeInverse();
+		// Remplacer ordreFin par les noeuds du graph inverse avec les bons labels
+		List<DirectedNode> ordreFinInverse = new ArrayList<>();
+		for (DirectedNode node : ordreFin) {
+			ordreFinInverse.add(inverseGraph.getNodeOfList(node));
+		}
+		System.out.println("DFS sur le graphe inverse");
+		List<List<DirectedNode>> cfcs = explorerGrapheBis(inverseGraph, ordreFinInverse); // Affiche les CFCs
+		System.out.println("CFCs : " + cfcs);
 	}
 }

@@ -12,37 +12,31 @@ import Nodes_Edges.DirectedNode;
 import Nodes_Edges.Edge;
 import Nodes_Edges.UndirectedNode;
 
-
-
 public class AdjacencyListDirectedGraph {
 
-	//--------------------------------------------------
-    // 				Class variables
-    //--------------------------------------------------
+    // --------------------------------------------------
+    // Class variables
+    // --------------------------------------------------
 
-	protected List<DirectedNode> nodes; // list of the nodes in the graph
-	protected List<Arc> arcs; // list of the arcs in the graph
+    protected List<DirectedNode> nodes; // list of the nodes in the graph
+    protected List<Arc> arcs; // list of the arcs in the graph
     protected int nbNodes; // number of nodes
     protected int nbArcs; // number of arcs
 
+    // --------------------------------------------------
+    // Constructors
+    // --------------------------------------------------
 
+    public AdjacencyListDirectedGraph() {
+        this.nodes = new ArrayList<DirectedNode>();
+        this.arcs = new ArrayList<Arc>();
+        this.nbNodes = 0;
+        this.nbArcs = 0;
+    }
 
-
-    //--------------------------------------------------
-    // 				Constructors
-    //--------------------------------------------------
-
-
-	public AdjacencyListDirectedGraph(){
-		this.nodes = new ArrayList<DirectedNode>();
-		this.arcs= new ArrayList<Arc>();
-		this.nbNodes = 0;
-	    this.nbArcs = 0;
-	}
-
-	public AdjacencyListDirectedGraph(List<DirectedNode> nodes,List<Arc> arcs) {
-		this.nodes = nodes;
-		this.arcs= arcs;
+    public AdjacencyListDirectedGraph(List<DirectedNode> nodes, List<Arc> arcs) {
+        this.nodes = nodes;
+        this.arcs = arcs;
         this.nbNodes = nodes.size();
         this.nbArcs = arcs.size();
     }
@@ -50,7 +44,7 @@ public class AdjacencyListDirectedGraph {
     public AdjacencyListDirectedGraph(int[][] matrix) {
         this.nbNodes = matrix.length;
         this.nodes = new ArrayList<DirectedNode>();
-        this.arcs= new ArrayList<Arc>();
+        this.arcs = new ArrayList<Arc>();
 
         for (int i = 0; i < this.nbNodes; i++) {
             this.nodes.add(new DirectedNode(i));
@@ -58,9 +52,9 @@ public class AdjacencyListDirectedGraph {
 
         for (DirectedNode n1 : this.getNodes()) {
             for (int j = 0; j < matrix[n1.getLabel()].length; j++) {
-            	DirectedNode n2 = this.getNodes().get(j);
+                DirectedNode n2 = this.getNodes().get(j);
                 if (matrix[n1.getLabel()][j] != 0) {
-                	Arc a = new Arc(n1,n2);
+                    Arc a = new Arc(n1, n2);
                     n1.addArc(a);
                     this.arcs.add(a);
                     n2.addArc(a);
@@ -73,27 +67,27 @@ public class AdjacencyListDirectedGraph {
     public AdjacencyListDirectedGraph(AdjacencyListDirectedGraph g) {
         super();
         this.nodes = new ArrayList<>();
-        this.arcs= new ArrayList<Arc>();
+        this.arcs = new ArrayList<Arc>();
         this.nbNodes = g.getNbNodes();
         this.nbArcs = g.getNbArcs();
 
-        for(DirectedNode n : g.getNodes()) {
+        for (DirectedNode n : g.getNodes()) {
             this.nodes.add(new DirectedNode(n.getLabel()));
         }
 
         for (Arc a1 : g.getArcs()) {
-        	this.arcs.add(a1);
-        	DirectedNode new_n   = this.getNodes().get(a1.getFirstNode().getLabel());
-        	DirectedNode other_n = this.getNodes().get(a1.getSecondNode().getLabel());
-        	Arc a2 = new Arc(a1.getFirstNode(),a1.getSecondNode(),a1.getWeight());
-        	new_n.addArc(a2);
-        	other_n.addArc(a2);
+            this.arcs.add(a1);
+            DirectedNode new_n = this.getNodes().get(a1.getFirstNode().getLabel());
+            DirectedNode other_n = this.getNodes().get(a1.getSecondNode().getLabel());
+            Arc a2 = new Arc(a1.getFirstNode(), a1.getSecondNode(), a1.getWeight());
+            new_n.addArc(a2);
+            other_n.addArc(a2);
         }
 
     }
 
     // ------------------------------------------
-    // 				Accessors
+    // Accessors
     // ------------------------------------------
 
     /**
@@ -118,24 +112,24 @@ public class AdjacencyListDirectedGraph {
     }
 
     /**
-	 * @return the number of arcs in the graph
- 	 */
+     * @return the number of arcs in the graph
+     */
     public int getNbArcs() {
         return this.nbArcs;
     }
 
     /**
-	 * @return true if arc (from,to) exists in the graph
- 	 */
+     * @return true if arc (from,to) exists in the graph
+     */
     public boolean isArc(DirectedNode from, DirectedNode to) {
         return this.getArcs().stream().anyMatch(
-            a -> a.getFirstNode().equals(from) && a.getSecondNode().equals(to)
-        );
+                a -> a.getFirstNode().equals(from) && a.getSecondNode().equals(to));
     }
 
     /**
-	 * Removes the arc (from,to), if it exists. And remove this arc and the inverse in the list of arcs from the two extremities (nodes)
- 	 */
+     * Removes the arc (from,to), if it exists. And remove this arc and the inverse
+     * in the list of arcs from the two extremities (nodes)
+     */
     public void removeArc(DirectedNode from, DirectedNode to) {
         if (!this.isArc(from, to)) {
             return;
@@ -148,10 +142,12 @@ public class AdjacencyListDirectedGraph {
     }
 
     /**
-	* Adds the arc (from,to) if it is not already present in the graph, requires the existing of nodes from and to.
-	* And add this arc to the incident list of both extremities (nodes) and into the global list "arcs" of the graph.
-    * On non-valued graph, every arc has a weight equal to 0.
-    */
+     * Adds the arc (from,to) if it is not already present in the graph, requires
+     * the existing of nodes from and to.
+     * And add this arc to the incident list of both extremities (nodes) and into
+     * the global list "arcs" of the graph.
+     * On non-valued graph, every arc has a weight equal to 0.
+     */
     public void addArc(DirectedNode from, DirectedNode to) {
         addArc(from, to, 1);
     }
@@ -168,9 +164,9 @@ public class AdjacencyListDirectedGraph {
         return;
     }
 
-    //--------------------------------------------------
-    // 				Methods
-    //--------------------------------------------------
+    // --------------------------------------------------
+    // Methods
+    // --------------------------------------------------
 
     /**
      * @return the corresponding nodes in the list this.nodes
@@ -193,23 +189,28 @@ public class AdjacencyListDirectedGraph {
     }
 
     /**
-	 * @return a new graph implementing IDirectedGraph interface which is the inverse graph of this
- 	 */
+     * @return a new graph implementing IDirectedGraph interface which is the
+     *         inverse graph of this
+     */
     public AdjacencyListDirectedGraph computeInverse() {
-        ArrayList<Arc> empty = new ArrayList<>();
-        AdjacencyListDirectedGraph g = new AdjacencyListDirectedGraph(this.getNodes(), empty);
+        ArrayList<DirectedNode> emptyNodes = new ArrayList<>();
+        this.nodes.forEach(n -> emptyNodes.add(new DirectedNode(n.getLabel())));
+        ArrayList<Arc> emptyArcs = new ArrayList<>();
+        AdjacencyListDirectedGraph g = new AdjacencyListDirectedGraph(emptyNodes, emptyArcs);
         // A completer
         this.arcs.forEach(a -> {
             DirectedNode n1 = a.getFirstNode();
             DirectedNode n2 = a.getSecondNode();
-            g.addArc(n2, n1, a.getWeight());
+            DirectedNode new_n1 = g.getNodeOfList(n1);
+            DirectedNode new_n2 = g.getNodeOfList(n2);
+            g.addArc(new_n2, new_n1, a.getWeight());
         });
         return g;
     }
 
     @Override
-    public String toString(){
-    	StringBuilder s = new StringBuilder();
+    public String toString() {
+        StringBuilder s = new StringBuilder();
         s.append("List of nodes and their successors/predecessors :\n");
         for (DirectedNode n : this.nodes) {
             s.append("\nNode ").append(n).append(" : ");
@@ -225,7 +226,7 @@ public class AdjacencyListDirectedGraph {
         }
         s.append("\nList of arcs :\n");
         for (Arc a : this.arcs) {
-        	s.append(a).append("  ");
+            s.append(a).append("  ");
         }
         s.append("\n");
         return s.toString();
@@ -236,7 +237,7 @@ public class AdjacencyListDirectedGraph {
         GraphTools.afficherMatrix(Matrix);
         AdjacencyListDirectedGraph al = new AdjacencyListDirectedGraph(Matrix);
         System.out.println(al);
-        System.out.println("(n_7,n_3) is it in the graph ? " +  al.isArc(al.getNodes().get(7), al.getNodes().get(3)));
+        System.out.println("(n_7,n_3) is it in the graph ? " + al.isArc(al.getNodes().get(7), al.getNodes().get(3)));
         // A completer
     }
 }
